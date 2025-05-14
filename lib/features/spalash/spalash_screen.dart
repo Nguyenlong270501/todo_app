@@ -55,6 +55,8 @@ class _SPlashScreenState extends State<SPlashScreen> {
     });
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:my_todo_app/core/utils/extensions.dart';
 import '../../../../../../core/constants/app_sizes.dart';
-import '../../../../../../core/route/app_router.dart';
 import '../../../../../../core/widgets/app_button.dart';
 import '../../../../../../core/widgets/app_textfield.dart';
 import '../../../../blocs/authentication/authentication_cubit.dart';
@@ -123,16 +121,12 @@ class _SignUpButton extends StatelessWidget {
           onClick:
               (isEnabled && !isLoading)
                   ? () {
-                    context
-                        .read<AuthenticationCubit>()
-                        .signUp(
-                          context.read<SignUpFormCubit>().state.email.value,
-                          context.read<SignUpFormCubit>().state.password.value,
-                          context.read<SignUpFormCubit>().state.username.value,
-                        )
-                        .then((_) {
-                          context.pushNamed(RouteNames.homepage);
-                        });
+                    FocusScope.of(context).unfocus();
+                    context.read<AuthenticationCubit>().signUp(
+                      context.read<SignUpFormCubit>().state.email.value,
+                      context.read<SignUpFormCubit>().state.password.value,
+                      context.read<SignUpFormCubit>().state.username.value,
+                    );
                   }
                   : null,
         );

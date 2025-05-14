@@ -57,7 +57,7 @@ class OnboardingContent extends StatelessWidget {
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: EdgeInsets.only(bottom: 30.h),
+                padding: EdgeInsets.only(bottom: 10.h),
                 child: ElevatedButton(
                   onPressed: () {
                     pageController.nextPage(
@@ -76,7 +76,7 @@ class OnboardingContent extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100.r),
                     ),
-                    minimumSize: Size(50.w, 50.h),
+                    minimumSize: Size(40.w, 40.h),
                   ),
                   child: const Icon(
                     Icons.arrow_forward_ios,

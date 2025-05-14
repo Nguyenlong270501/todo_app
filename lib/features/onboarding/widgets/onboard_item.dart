@@ -25,13 +25,7 @@ class OnBoardItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           AppSizes.gapH48,
-          SizedBox(
-            height: 300.h,
-            child: Image.asset(
-              image,
-              fit: BoxFit.cover,
-            ),
-          ),
+          SizedBox(height: 300.h, child: Image.asset(image, fit: BoxFit.cover)),
           AppSizes.gapH48,
           Text(
             title,
@@ -45,9 +39,7 @@ class OnBoardItem extends StatelessWidget {
             textAlign: TextAlign.center,
             style: AppTypography.medium16(
               color: Colors.grey.shade600,
-            ).copyWith(
-              height: 1.5,
-            ),
+            ).copyWith(height: 1.5),
           ),
         ],
       ),

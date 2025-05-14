@@ -6,28 +6,35 @@ class OnboardingCustomPainter extends CustomPainter {
   OnboardingCustomPainter({required this.color});
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.fill
-      ..strokeWidth = 5
-      ..color = color;
+    final paint =
+        Paint()
+          ..style = PaintingStyle.fill
+          ..strokeWidth = 5
+          ..color = color;
 
     final path = Path();
 
-    path.lineTo(0, size.height - 100);
+    path.lineTo(0, size.height - 80);
     path.quadraticBezierTo(
-        size.width * 0.1, size.height - 50, size.width * .5, size.height - 90);
-
-    path.quadraticBezierTo(size.width - (size.width * 0.1), size.height - 35,
-        size.width, size.height - 100);
-
+      size.width * 0.2,
+      size.height - 10,
+      size.width * .5,
+      size.height - 60,
+    );
+    path.quadraticBezierTo(
+      size.width * 0.7,
+      size.height - 10,
+      size.width,
+      size.height - 70,
+    );
     path.lineTo(size.width, 0);
     path.lineTo(0, 0);
     path.close();
 
     canvas.drawPath(path, paint);
 
-    const circleRadius = 55.0;
-    var circleCenter = Offset(size.width * .5, size.height - 80);
+    const circleRadius = 45.0;
+    var circleCenter = Offset(size.width * .5, size.height - 40);
 
     canvas.drawCircle(circleCenter, circleRadius, paint);
   }
