@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/screens/sign_in/sign_in_screen.dart';
 import '../../features/auth/presentation/screens/sign_up/sign_up_screen.dart';
+import '../../features/auth/presentation/widgets/forgot_password_screens.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/spalash/spalash_screen.dart';
@@ -18,6 +19,7 @@ class RouteNames {
   static const String homepage = "/homepage";
   static const String addtaskpage = "/addtask";
   static const String settingspage = "/settings";
+  static const String forgotpasswordpage = "/forgotpassword";
 }
 
 class AppRouter {
@@ -45,6 +47,11 @@ class AppRouter {
         path: RouteNames.loginpage,
         name: RouteNames.loginpage,
         builder: (context, state) => const SignInScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.forgotpasswordpage,
+        name: RouteNames.forgotpasswordpage,
+        builder: (context, state) => const ForgotPasswordScreens(),
       ),
       GoRoute(
         path: RouteNames.signuppage,

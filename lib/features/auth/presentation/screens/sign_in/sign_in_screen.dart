@@ -53,9 +53,7 @@ class SignInScreen extends StatelessWidget {
                   Center(
                     child: TextButton(
                       onPressed: () {
-                        Alerts.of(
-                          context,
-                        ).showInfo('Forgot password feature coming soon!');
+                        context.pushNamed(RouteNames.forgotpasswordpage);
                       },
                       child: Text(
                         'Forgot password?',

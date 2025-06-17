@@ -34,6 +34,32 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
+  Future<void> signInWithGoogle() async {
+    try {
+      emit(AuthenticationLoadingState());
+      final result = await authReponsitory.signInWithGoogle();
+      result.fold(
+        (error) => emit(AuthenticationErrortate(error)),
+        (userCredential) => emit(AuthenticationSuccessState()),
+      );
+    } catch (e) {
+      emit(AuthenticationErrortate(e.toString()));
+    }
+  }
+
+  Future<void> signInWithFacebook() async {
+    try {
+      emit(AuthenticationLoadingState());
+      final result = await authReponsitory.signInWithFacebook();
+      result.fold(
+        (error) => emit(AuthenticationErrortate(error)),
+        (user) => emit(AuthenticationSuccessState()),
+      );
+    } catch (e) {
+      emit(AuthenticationErrortate(e.toString()));
+    }
+  }
+
   Future<void> signout() async {
     try {
       emit(AuthenticationLoadingState());

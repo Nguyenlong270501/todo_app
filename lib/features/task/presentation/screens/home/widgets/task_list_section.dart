@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 import '../../../../../../core/constants/app_assets.dart';
 import '../../../../../../core/constants/app_sizes.dart';
 import '../../../../../../core/route/app_router.dart';
@@ -53,7 +52,7 @@ class TaskListSection extends StatelessWidget {
                 var task = tasks[index];
                 Widget taskcontainer = TaskCard(
                   uid: uid,
-                  id: task.id ?? const Uuid().v4(),
+                  id: task.id ?? '',
                   color:
                       AppTheme
                           .themes[AppThemeColor.values[task.colorIndex ?? 0]]!

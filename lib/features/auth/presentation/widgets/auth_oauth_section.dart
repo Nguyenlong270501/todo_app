@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/theme/app_styles.dart';
 import '../../../../core/widgets/app_alerts.dart';
+import '../../blocs/authentication/authentication_cubit.dart';
 
 class AuthOauthSection extends StatelessWidget {
   const AuthOauthSection({super.key});
@@ -16,11 +18,19 @@ class AuthOauthSection extends StatelessWidget {
           icon: Brands.google,
           label: 'Continue with Google',
           onPressed: () {
-            Alerts.of(context).showWarning(
-              'This feature is not available yet. Please try again later.',
-            );
+            context.read<AuthenticationCubit>().signInWithGoogle();
           },
           color: Colors.deepPurple,
+        ),
+        AppSizes.gapH16,
+        _buildSocialButton(
+          context: context,
+          icon: Brands.facebook,
+          label: 'Continue with Facebook',
+          onPressed: () {
+            context.read<AuthenticationCubit>().signInWithFacebook();
+          },
+          isDark: true,
         ),
         AppSizes.gapH16,
         _buildSocialButton(
@@ -54,25 +64,23 @@ class AuthOauthSection extends StatelessWidget {
         side: BorderSide(
           color: isDark ? Colors.transparent : Colors.grey.shade300,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Brand(
-            icon,
-            size: 24,
-          ),
-          const SizedBox(width: 12),
-          Text(
-            label,
-            style: AppTypography.medium16().copyWith(
-              color: isDark ? Colors.white : Colors.black87,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Brand(icon, size: 24),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: AppTypography.medium16().copyWith(
+                color: isDark ? Colors.white : Colors.black87,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_todo_app/core/utils/extensions.dart';
-
 import '../../../../core/constants/app_sizes.dart';
+import '../../../../core/route/app_router.dart';
 import '../../../../core/widgets/app_button.dart';
 import '../../../auth/blocs/authentication/authentication_cubit.dart';
-
 
 class ButtonsSection extends StatelessWidget {
   final VoidCallback onSaveChanges;
 
-  const ButtonsSection({
-    super.key,
-    required this.onSaveChanges,
-  });
+  const ButtonsSection({super.key, required this.onSaveChanges});
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +32,9 @@ class ButtonsSection extends StatelessWidget {
           width: double.infinity,
           title: 'Logout',
           onClick: () {
-            context.read<AuthenticationCubit>().signout();
-            Navigator.of(context).pop();
+            context.read<AuthenticationCubit>().signout().then(
+              (_) => context.goNamed(RouteNames.welcomepage),
+            );
           },
         ),
       ],

@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user.dart';
 
 class AuthReponsitory {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   //đăng nhập email và password
   Future<Either<String, UserModel>> loginWithEmail(
@@ -118,6 +121,150 @@ class AuthReponsitory {
       await _firebaseAuth.signOut();
     } catch (e) {
       throw Exception('Failed to sign out: $e');
+    }
+  }
+
+  // google login
+  Future<Either<String, UserModel>> signInWithGoogle() async {
+    try {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+
+      if (googleUser == null) {
+        return const Left('Google sign in aborted');
+      }
+
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credential
+      final UserCredential userCredential = await _firebaseAuth
+          .signInWithCredential(credential);
+
+      final user = userCredential.user;
+      if (user == null) {
+        return const Left('Failed to sign in with Google');
+      }
+
+      // Check if user exists in Firestore
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+
+      if (!userDoc.exists) {
+        // Create new user document if it doesn't exist
+        await _firestore.collection('users').doc(user.uid).set({
+          'email': user.email,
+          'username': user.displayName ?? 'User',
+          'id': user.uid,
+          'avatarIndex': 0,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+      }
+
+      return Right(await _getUserData(user.uid));
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'account-exists-with-different-credential':
+          return const Left(
+            'Account already exists with this email but logged in with a different method',
+          );
+        case 'invalid-credential':
+          return const Left('Invalid credential or expired');
+        case 'operation-not-allowed':
+          return const Left('This login method is not allowed');
+        case 'user-disabled':
+          return const Left('This account has been disabled');
+        case 'user-not-found':
+          return const Left('Account not found');
+        case 'wrong-password':
+          return const Left('Wrong password');
+        case 'invalid-verification-code':
+          return const Left('Invalid verification code');
+        case 'invalid-verification-id':
+          return const Left('Invalid verification ID');
+        default:
+          return Left('Login failed: ${e.message}');
+      }
+    } catch (e) {
+      return Left('An unexpected error occurred: $e');
+    }
+  }
+
+  //facebook login
+  Future<Either<String, UserModel>> signInWithFacebook() async {
+    try {
+      // Trigger the Facebook sign-in flow
+      final LoginResult result = await FacebookAuth.instance.login();
+
+      if (result.status == LoginStatus.success) {
+        // Get the access token
+        final AccessToken accessToken = result.accessToken!;
+
+        // Get user data from Facebook
+        final userData = await FacebookAuth.instance.getUserData(
+          fields: "name,email",
+        );
+
+        // Create a credential from the access token
+        final OAuthCredential credential = FacebookAuthProvider.credential(
+          accessToken.token,
+        );
+
+        // Sign in to Firebase with the Facebook credential
+        final UserCredential userCredential = await _firebaseAuth
+            .signInWithCredential(credential);
+
+        final user = userCredential.user;
+        if (user == null) {
+          return const Left('Failed to sign in with Facebook');
+        }
+
+        // Check if user exists in Firestore
+        final userDoc =
+            await _firestore.collection('users').doc(user.uid).get();
+
+        if (!userDoc.exists) {
+          // Create new user document if it doesn't exist
+          await _firestore.collection('users').doc(user.uid).set({
+            'email': user.email ?? userData['email'],
+            'username': user.displayName ?? userData['name'] ?? 'User',
+            'id': user.uid,
+            'avatarIndex': 0,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        }
+
+        return Right(await _getUserData(user.uid));
+      } else if (result.status == LoginStatus.cancelled) {
+        return const Left('Facebook login cancelled');
+      } else {
+        return const Left('Facebook login failed');
+      }
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'account-exists-with-different-credential':
+          return const Left(
+            'Account already exists with this email but logged in with a different method',
+          );
+        case 'invalid-credential':
+          return const Left('Invalid credential or expired');
+        case 'operation-not-allowed':
+          return const Left('This login method is not allowed');
+        case 'user-disabled':
+          return const Left('This account has been disabled');
+        case 'user-not-found':
+          return const Left('Account not found');
+        default:
+          return Left('Login failed: ${e.message}');
+      }
+    } catch (e) {
+      return Left('An unexpected error occurred: $e');
     }
   }
 }
