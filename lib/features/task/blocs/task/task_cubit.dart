@@ -46,4 +46,13 @@ class TaskCubit extends Cubit<TaskState> {
       (_) => emit(TaskDeleted(id)),
     );
   }
+
+  Future<void> getWeeklyTasks(DateTime weekStart, String uid) async {
+    emit(TaskLoading());
+    final result = await _taskRepository.getWeeklyTasks(weekStart, uid);
+    result.fold(
+      (failure) => emit(TaskError(failure)),
+      (weeklyTasks) => emit(WeeklyTasksLoaded(weeklyTasks)),
+    );
+  }
 }

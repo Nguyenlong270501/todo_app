@@ -127,7 +127,6 @@ class AuthReponsitory {
   // google login
   Future<Either<String, UserModel>> signInWithGoogle() async {
     try {
-      // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
@@ -137,6 +136,11 @@ class AuthReponsitory {
       // Obtain the auth details from the request
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
+
+      // Check if we have valid tokens
+      if (googleAuth.accessToken == null || googleAuth.idToken == null) {
+        return const Left('Failed to obtain Google authentication tokens');
+      }
 
       // Create a new credential
       final credential = GoogleAuthProvider.credential(
@@ -162,6 +166,7 @@ class AuthReponsitory {
           'email': user.email,
           'username': user.displayName ?? 'User',
           'id': user.uid,
+          'imageUrl': user.photoURL ?? '',
           'avatarIndex': 0,
           'createdAt': FieldValue.serverTimestamp(),
         });
@@ -213,7 +218,7 @@ class AuthReponsitory {
 
         // Create a credential from the access token
         final OAuthCredential credential = FacebookAuthProvider.credential(
-          accessToken.token,
+          accessToken.tokenString
         );
 
         // Sign in to Firebase with the Facebook credential
@@ -235,6 +240,7 @@ class AuthReponsitory {
             'email': user.email ?? userData['email'],
             'username': user.displayName ?? userData['name'] ?? 'User',
             'id': user.uid,
+            'imageUrl': user.photoURL ?? '',
             'avatarIndex': 0,
             'createdAt': FieldValue.serverTimestamp(),
           });

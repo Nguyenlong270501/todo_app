@@ -12,11 +12,7 @@ import 'widgets/task_form_section.dart';
 class AddTaskScreen extends StatefulWidget {
   final TaskModel? task;
   final DateTime date;
-  const AddTaskScreen({
-    this.task,
-    required this.date,
-    super.key,
-  });
+  const AddTaskScreen({this.task, required this.date, super.key});
 
   @override
   State<AddTaskScreen> createState() => _AddTaskScreenState();
@@ -35,8 +31,9 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             Alerts.of(context).showError(state.message);
           } else if (state is TaskAdded || state is TaskUpdated) {
             context.read<TaskCubit>().getTasks(
-                  DateFormat('yyyy-MM-dd').format(widget.date), uid!,
-                );
+              DateFormat('yyyy-MM-dd').format(widget.date),
+              uid!,
+            );
             context.pop();
           }
         },

@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/value_objects/email.dart';
 import '../../../../core/value_objects/password.dart';
-
 part 'login_form_state.dart';
 
 class LoginFormCubit extends Cubit<LoginState> {

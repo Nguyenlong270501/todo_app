@@ -9,6 +9,7 @@ import '../../features/spalash/spalash_screen.dart';
 import '../../features/task/data/models/task_model.dart';
 import '../../features/task/presentation/screens/home/home_screen.dart';
 import '../../features/task/presentation/screens/task/task_screen.dart';
+import '../../features/task/presentation/screens/task/weekly_screen.dart';
 import '../../features/welcome/welcome_screen.dart';
 
 class RouteNames {
@@ -20,6 +21,7 @@ class RouteNames {
   static const String addtaskpage = "/addtask";
   static const String settingspage = "/settings";
   static const String forgotpasswordpage = "/forgotpassword";
+  static const String weeklypage = '/weekly';
 }
 
 class AppRouter {
@@ -71,6 +73,15 @@ class AppRouter {
           final task = data?['task'] as TaskModel?;
           final DateTime date = data?['date'] as DateTime;
           return AddTaskScreen(task: task, date: date);
+        },
+      ),
+      GoRoute(
+        path: RouteNames.weeklypage,
+        name: RouteNames.weeklypage,
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>?;
+          final DateTime? initialDate = data?['date'] as DateTime?;
+          return WeeklyCalendarScreen(initialDate: initialDate);
         },
       ),
       GoRoute(

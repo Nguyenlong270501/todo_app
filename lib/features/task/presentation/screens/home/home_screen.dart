@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_todo_app/core/utils/extensions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/constants/app_sizes.dart';
 import '../../../../../core/route/app_router.dart';
 import '../../../../../core/theme/app_styles.dart';
@@ -31,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _loadTasks();
-    _clearOldTasksFromFirestore();
+    // _clearOldTasksFromFirestore();
   }
 
   void _loadTasks() {
@@ -41,29 +39,29 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<void> _clearOldTasksFromFirestore() async {
-    if (uid == null) return;
-    final prefs = await SharedPreferences.getInstance();
-    final now = DateTime.now();
-    final todayStr = DateFormat('yyyy-MM-dd').format(now);
-    final lastChecked = prefs.getString('last_checked_date');
-    debugPrint('lastChecked: $lastChecked');
-    if (lastChecked == null || lastChecked != todayStr) {
-      final tasksSnapshot =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(uid)
-              .collection('tasks')
-              .get();
-      for (var doc in tasksSnapshot.docs) {
-        final taskDate = doc['date'];
-        if (taskDate.compareTo(todayStr) < 0) {
-          await doc.reference.delete();
-        }
-      }
-      await prefs.setString('last_checked_date', todayStr);
-    }
-  }
+  // Future<void> _clearOldTasksFromFirestore() async {
+  //   if (uid == null) return;
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final now = DateTime.now();
+  //   final todayStr = DateFormat('yyyy-MM-dd').format(now);
+  //   final lastChecked = prefs.getString('last_checked_date');
+  //   debugPrint('lastChecked: $lastChecked');
+  //   if (lastChecked == null || lastChecked != todayStr) {
+  //     final tasksSnapshot =
+  //         await FirebaseFirestore.instance
+  //             .collection('users')
+  //             .doc(uid)
+  //             .collection('tasks')
+  //             .get();
+  //     for (var doc in tasksSnapshot.docs) {
+  //       final taskDate = doc['date'];
+  //       if (taskDate.compareTo(todayStr) < 0) {
+  //         await doc.reference.delete();
+  //       }
+  //     }
+  //     await prefs.setString('last_checked_date', todayStr);
+  //   }
+  // }
 
   void _onDateSelected(DateTime newdate) {
     setState(() {
@@ -97,9 +95,16 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text(
-                    DateFormat('MMMM, dd').format(currentdate),
-                    style: AppTypography.medium18(),
+                  AppButton(
+                    color: context.theme.primaryColor,
+                    width: 150.w,
+                    title: 'View Weekly',
+                    onClick: () {
+                      context.pushNamed(
+                        RouteNames.weeklypage,
+                        extra: {'date': currentdate},
+                      );
+                    },
                   ),
                   const Spacer(),
                   AppButton(

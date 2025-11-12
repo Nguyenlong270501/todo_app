@@ -51,3 +51,12 @@ class TaskError extends TaskState {
   @override
   List<Object?> get props => [message];
 }
+
+class WeeklyTasksLoaded extends TaskState {
+  final Map<String, List<TaskModel>> weeklyTasks;
+
+  const WeeklyTasksLoaded(this.weeklyTasks);
+
+  @override
+  List<Object?> get props => [weeklyTasks];
+}
