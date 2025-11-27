@@ -50,6 +50,10 @@ class ReminderSection extends StatelessWidget {
                 value: 20,
                 child: Text("20 Min Earlier"),
               ),
+              DropdownMenuItem(
+                value: 30,
+                child: Text("30 Min Earlier"),
+              ),
             ],
             onChanged: (value) {
               if (value != null) {

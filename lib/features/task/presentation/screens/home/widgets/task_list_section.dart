@@ -42,7 +42,8 @@ class TaskListSection extends StatelessWidget {
           return const AppCircularIndicator();
         }
 
-        final tasks = snapshot.data ?? [];
+        final data = snapshot.data ?? [];
+        final tasks = TaskRepository().sortTasksByTime(data);
 
         return tasks.isNotEmpty
             ? ListView.builder(

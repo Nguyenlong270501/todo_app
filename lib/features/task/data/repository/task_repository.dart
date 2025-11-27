@@ -34,15 +34,19 @@ class TaskRepository {
   }
 
   Stream<List<TaskModel>> getTasksStream(String date, String userId) {
-  return _firestore
-      .collection('users')
-      .doc(userId)
-      .collection('tasks')
-      .where('date', isEqualTo: date)
-      .snapshots()
-      .map((snapshot) => 
-          snapshot.docs.map((doc) => TaskModel.fromMap(doc.data())).toList());
-}
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('tasks')
+        .where('date', isEqualTo: date)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs
+                  .map((doc) => TaskModel.fromMap(doc.data()))
+                  .toList(),
+        );
+  }
 
   Future<Either<String, bool>> addTask(TaskModel task, String uid) async {
     try {
@@ -99,41 +103,67 @@ class TaskRepository {
   }
 
   Future<Either<String, Map<String, List<TaskModel>>>> getWeeklyTasks(
-  DateTime weekStart,
-  String userId,
-) async {
-  try {
-    final weekEnd = weekStart.add(const Duration(days: 6));
-    final startDate = DateFormat('yyyy-MM-dd').format(weekStart);
-    final endDate = DateFormat('yyyy-MM-dd').format(weekEnd);
-    
-    final snapshot = await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('tasks')
-        .where('date', isGreaterThanOrEqualTo: startDate)
-        .where('date', isLessThanOrEqualTo: endDate)
-        .get();
+    DateTime weekStart,
+    String userId,
+  ) async {
+    try {
+      final weekEnd = weekStart.add(const Duration(days: 6));
+      final startDate = DateFormat('yyyy-MM-dd').format(weekStart);
+      final endDate = DateFormat('yyyy-MM-dd').format(weekEnd);
 
-    final Map<String, List<TaskModel>> weeklyTasks = {};
-    
-    for (var doc in snapshot.docs) {
-      final task = TaskModel.fromMap(doc.data());
-      final date = task.date;
-      if (weeklyTasks[date] == null) {
-        weeklyTasks[date!] = [];
+      final snapshot =
+          await _firestore
+              .collection('users')
+              .doc(userId)
+              .collection('tasks')
+              .where('date', isGreaterThanOrEqualTo: startDate)
+              .where('date', isLessThanOrEqualTo: endDate)
+              .get();
+
+      final Map<String, List<TaskModel>> weeklyTasks = {};
+
+      for (var doc in snapshot.docs) {
+        final task = TaskModel.fromMap(doc.data());
+        final date = task.date;
+        if (weeklyTasks[date] == null) {
+          weeklyTasks[date!] = [];
+        }
+        weeklyTasks[date]!.add(task);
       }
-      weeklyTasks[date]!.add(task);
-    }
-    
-    // Sort tasks by time for each day
-    weeklyTasks.forEach((date, tasks) {
-      tasks.sort((a, b) => a.time!.compareTo(b.time!));
-    });
 
-    return Right(weeklyTasks);
-  } catch (e) {
-    return Left(e.toString());
+      // Sort tasks by time for each day
+      weeklyTasks.forEach((date, tasks) {
+        tasks.sort((a, b) => a.time!.compareTo(b.time!));
+      });
+
+      return Right(weeklyTasks);
+    } catch (e) {
+      return Left(e.toString());
+    }
   }
-}
+
+  //sort task by time
+  List<TaskModel> sortTasksByTime(List<TaskModel> tasks) {
+    tasks.sort((a, b) {
+      final timeA = a.time ?? '';
+      final timeB = b.time ?? '';
+
+      if (timeA.isEmpty && timeB.isEmpty) return 0;
+      if (timeA.isEmpty) return 1;
+      if (timeB.isEmpty) return -1;
+
+      try {
+        final format = DateFormat('hh:mm a');
+        final dateTimeA = format.parse(timeA);
+        final dateTimeB = format.parse(timeB);
+
+        final hourCompare = dateTimeA.hour.compareTo(dateTimeB.hour);
+        if (hourCompare != 0) return hourCompare;
+        return dateTimeA.minute.compareTo(dateTimeB.minute);
+      } catch (e) {
+        return timeA.compareTo(timeB);
+      }
+    });
+    return tasks;
+  }
 }

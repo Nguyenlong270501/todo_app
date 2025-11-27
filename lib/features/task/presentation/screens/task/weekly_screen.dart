@@ -7,6 +7,7 @@ import '../../../../../core/route/app_router.dart';
 import '../../../../../core/theme/app_thems.dart';
 import '../../../../../core/widgets/app_circular_indicator.dart';
 import '../../../blocs/task/task_cubit.dart';
+import '../../../data/repository/task_repository.dart';
 
 class WeeklyCalendarScreen extends StatefulWidget {
   final DateTime? initialDate;
@@ -142,14 +143,16 @@ class _WeeklyCalendarScreenState extends State<WeeklyCalendarScreen> {
                   } else if (state is WeeklyTasksLoaded) {
                     final weeklyTasks = state.weeklyTasks;
                     final weekDays = _getWeekDays();
-
                     return ListView.builder(
                       padding: const EdgeInsets.all(16),
                       itemCount: weekDays.length,
                       itemBuilder: (context, dayIndex) {
                         final day = weekDays[dayIndex];
                         final dayStr = DateFormat('yyyy-MM-dd').format(day);
-                        final tasksForDay = weeklyTasks[dayStr] ?? [];
+                        final dataTasks = weeklyTasks[dayStr] ?? [];
+                        final tasksForDay = TaskRepository().sortTasksByTime(
+                          dataTasks,
+                        );
                         final isToday = _isSameDay(day, DateTime.now());
 
                         return Card(
