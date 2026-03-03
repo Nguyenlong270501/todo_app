@@ -1,16 +1,50 @@
-# my_todo_app
+# Todo App
 
-A new Flutter project.
+Một ứng dụng **Quản lý công việc (Todo App)** được xây dựng bằng **Flutter** giúp người dùng theo dõi và quản lý công việc hằng ngày một cách đơn giản và hiệu quả.
+
+## Tính năng chính
+
+-  Hiển thị danh sách công việc
+-  Thêm công việc mới
+-  Chỉnh sửa công việc
+-  Xóa công việc
+-  Thông báo cho công việc
+-  Hỗ trợ Android / iOS / Web
+
+## Công nghệ sử dụng
+
+- Dart
+- Flutter
+- Firebase
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Run project
+- Get dependencies
+```sh
+flutter pub get
+```
 
-A few resources to get you started if this is your first Flutter project:
+- Run
+```sh
+flutter run
+```
+### Preview
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+<p align="center">
+  <img src="assets/screenshots/screenshot-1.png" width="250"/>
+  <img src="assets/screenshots/screenshot-2.png" width="250"/>
+  <img src="assets/screenshots/screenshot-3.png" width="250"/>
+</p>
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<p align="center">
+  <img src="assets/screenshots/screenshot-4.png" width="250"/>
+  <img src="assets/screenshots/screenshot-5.png" width="250"/>
+  <img src="assets/screenshots/screenshot-6.png" width="250"/>
+</p>
+
+<p align="center">
+  <img src="assets/screenshots/screenshot-7.png" width="250"/>
+  <img src="assets/screenshots/screenshot-8.png" width="250"/>
+  <img src="assets/screenshots/screenshot-9.png" width="250"/>
+</p>
